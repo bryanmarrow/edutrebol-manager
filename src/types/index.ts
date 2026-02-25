@@ -11,7 +11,7 @@ export interface Student {
 export interface ClassGroup {
     id: string;
     name: string; // e.g. "Matemáticas I"
-    grade: string; // e.g. "2°"
+    grade: number; // e.g. 1, 2, 3
     section: string; // e.g. "B"
     schedule?: {
         days: number[]; // 1=Monday, 5=Friday

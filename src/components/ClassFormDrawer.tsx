@@ -27,7 +27,7 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
     const isEdit = !!classData;
 
     const [name, setName] = useState("");
-    const [grade, setGrade] = useState("");
+    const [grade, setGrade] = useState<number>(0);
     const [section, setSection] = useState("");
     const [selectedDays, setSelectedDays] = useState<number[]>([]);
     const [startTime, setStartTime] = useState("08:00");
@@ -37,14 +37,14 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
     useEffect(() => {
         if (classData) {
             setName(classData.name);
-            setGrade(classData.grade);
+            setGrade(classData.grade as number);
             setSection(classData.section);
             setSelectedDays(classData.schedule?.days || []);
             setStartTime(classData.schedule?.start_time || "08:00");
             setEndTime(classData.schedule?.end_time || "09:00");
         } else {
             setName("");
-            setGrade("");
+            setGrade(0);
             setSection("");
             setSelectedDays([]);
             setStartTime("08:00");
@@ -61,7 +61,7 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        if (!name.trim() || !grade.trim() || !section.trim()) {
+        if (!name.trim() || grade === 0 || !section.trim()) {
             toast.error("Nombre, grado y grupo son requeridos");
             return;
         }
@@ -79,10 +79,10 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
             const schedule = { days: selectedDays, start_time: startTime, end_time: endTime };
 
             if (isEdit && classData) {
-                await updateClass(classData.id, { name: name.trim(), grade: grade.trim(), section: section.trim(), schedule });
+                await updateClass(classData.id, { name: name.trim(), grade, section: section.trim(), schedule });
                 toast.success("Clase actualizada");
             } else {
-                await createClass({ name: name.trim(), grade: grade.trim(), section: section.trim(), schedule });
+                await createClass({ name: name.trim(), grade, section: section.trim(), schedule });
                 toast.success("Clase creada");
             }
 
@@ -145,32 +145,41 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                         />
                     </div>
 
-                    {/* Grade + Section */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
-                                Grado
-                            </label>
-                            <input
-                                type="text"
-                                value={grade}
-                                onChange={(e) => setGrade(e.target.value)}
-                                placeholder="ej. 1°"
-                                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                            />
+                    {/* Grade selector */}
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
+                            Grado
+                        </label>
+                        <div className="flex gap-3">
+                            {([1, 2, 3] as const).map((g) => (
+                                <button
+                                    key={g}
+                                    type="button"
+                                    onClick={() => setGrade(g)}
+                                    className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-colors ${
+                                        grade === g
+                                            ? "bg-indigo-600 text-white"
+                                            : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                    }`}
+                                >
+                                    {g === 1 ? "1ero" : g === 2 ? "2do" : "3ero"}
+                                </button>
+                            ))}
                         </div>
-                        <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
-                                Grupo
-                            </label>
-                            <input
-                                type="text"
-                                value={section}
-                                onChange={(e) => setSection(e.target.value)}
-                                placeholder="ej. A"
-                                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                            />
-                        </div>
+                    </div>
+
+                    {/* Section */}
+                    <div>
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                            Grupo
+                        </label>
+                        <input
+                            type="text"
+                            value={section}
+                            onChange={(e) => setSection(e.target.value)}
+                            placeholder="ej. A"
+                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                        />
                     </div>
 
                     {/* Days selector */}

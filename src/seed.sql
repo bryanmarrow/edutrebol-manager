@@ -34,7 +34,7 @@ BEGIN
     gen_random_uuid(),
     teacher_uuid,
     'Historia',
-    '1°',
+    1,
     'A',
     '{"days": [1, 2, 3, 4, 5], "start_time": "08:00", "end_time": "09:30"}'::jsonb
   )

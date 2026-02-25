@@ -15,6 +15,7 @@ import {
     saveAttendanceRecords,
     getClassInfo,
 } from "@/lib/queries";
+import { formatGrade } from "@/lib/utils";
 
 export default function AttendanceSessionPage() {
     const params = useParams();
@@ -46,7 +47,7 @@ export default function AttendanceSessionPage() {
 
                 if (classInfo) {
                     setClassName(classInfo.name);
-                    setGroupName(`${classInfo.grade} ${classInfo.section}`);
+                    setGroupName(`${formatGrade(classInfo.grade)} ${classInfo.section}`);
                 }
 
                 if (session) {

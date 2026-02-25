@@ -5,6 +5,7 @@ import { TopBar } from "@/components/layout/TopBar";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { ClassCard } from "@/components/ClassCard";
 import { getTodayClasses, getTeacherClasses, getCurrentTeacher } from "@/lib/queries";
+import { formatGrade } from "@/lib/utils";
 import type { ClassGroup } from "@/types";
 import { CalendarOff } from "lucide-react";
 import Link from "next/link";
@@ -63,7 +64,7 @@ export default function DashboardPage() {
                                     key={cls.id}
                                     id={cls.id}
                                     name={cls.name}
-                                    group={`${cls.grade} ${cls.section}`}
+                                    group={`${formatGrade(cls.grade)} ${cls.section}`}
                                     startTime={cls.schedule?.start_time || "--:--"}
                                     endTime={cls.schedule?.end_time || "--:--"}
                                     status="pending"

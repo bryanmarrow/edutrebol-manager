@@ -8,6 +8,7 @@ import {
     getTeacherClasses,
     updateClassSchedule,
 } from "@/lib/queries";
+import { formatGrade } from "@/lib/utils";
 import type { ClassGroup } from "@/types";
 import {
     Calendar,
@@ -142,7 +143,7 @@ export default function SchedulePage() {
                                             <div className="flex items-center gap-2 mb-0.5">
                                                 <h3 className="text-sm font-bold text-slate-900">{cls.name}</h3>
                                                 <span className="text-xs font-medium px-2 py-0.5 rounded bg-indigo-50 text-indigo-600">
-                                                    {cls.grade} {cls.section}
+                                                    {formatGrade(cls.grade)} {cls.section}
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-3 text-xs text-slate-500">
@@ -271,7 +272,7 @@ export default function SchedulePage() {
                                                             key={c.id}
                                                             className="text-[11px] font-medium px-2 py-0.5 rounded-full bg-indigo-100 text-indigo-700"
                                                         >
-                                                            {c.schedule?.start_time} {c.name} {c.grade} {c.section}
+                                                            {c.schedule?.start_time} {c.name} {formatGrade(c.grade)} {c.section}
                                                         </span>
                                                     ))}
                                                 </div>

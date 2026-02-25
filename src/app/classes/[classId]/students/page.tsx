@@ -12,6 +12,7 @@ import {
     updateStudent,
     deleteStudent,
 } from "@/lib/queries";
+import { formatGrade } from "@/lib/utils";
 import {
     UserPlus,
     Pencil,
@@ -39,7 +40,7 @@ export default function StudentsPage() {
     const classId = params.classId as string;
 
     const [students, setStudents] = useState<Student[]>([]);
-    const [classInfo, setClassInfo] = useState<{ name: string; grade: string; section: string } | null>(null);
+    const [classInfo, setClassInfo] = useState<{ name: string; grade: number; section: string } | null>(null);
     const [loading, setLoading] = useState(true);
     const [search, setSearch] = useState("");
 
@@ -157,7 +158,7 @@ export default function StudentsPage() {
     return (
         <div className="min-h-screen bg-slate-50 pb-28">
             <Toaster position="top-center" richColors />
-            <TopBar title={classInfo ? `${classInfo.name} — ${classInfo.grade} ${classInfo.section}` : "Alumnos"} showBack />
+            <TopBar title={classInfo ? `${classInfo.name} — ${formatGrade(classInfo.grade)} ${classInfo.section}` : "Alumnos"} showBack />
 
             <main className="px-4 py-4">
                 {/* Stats bar */}

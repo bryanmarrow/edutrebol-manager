@@ -14,7 +14,7 @@ create table classes (
   id uuid default uuid_generate_v4() primary key,
   teacher_id uuid references teachers(id) not null,
   name text not null, -- e.g. "Matemáticas"
-  grade text not null, -- e.g. "2°"
+  grade integer not null, -- e.g. 1, 2, 3
   section text not null, -- e.g. "B"
   schedule jsonb, -- Stores days and times
   created_at timestamp with time zone default timezone('utc'::text, now()) not null

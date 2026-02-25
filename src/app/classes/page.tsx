@@ -7,6 +7,7 @@ import { ClassFormDrawer } from "@/components/ClassFormDrawer";
 import { TopBar } from "@/components/layout/TopBar";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { getTeacherClasses, deleteClass } from "@/lib/queries";
+import { formatGrade } from "@/lib/utils";
 import { toast } from "sonner";
 import type { ClassGroup } from "@/types";
 
@@ -86,7 +87,7 @@ export default function ClassesPage() {
                                 key={cls.id}
                                 id={cls.id}
                                 name={cls.name}
-                                group={`${cls.grade} ${cls.section}`}
+                                group={`${formatGrade(cls.grade)} ${cls.section}`}
                                 startTime={cls.schedule?.start_time || "--:--"}
                                 endTime={cls.schedule?.end_time || "--:--"}
                                 status="upcoming"

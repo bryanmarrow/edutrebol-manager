@@ -74,7 +74,7 @@ export async function updateClassSchedule(classId: string, schedule: {
 
 export async function createClass(data: {
     name: string;
-    grade: string;
+    grade: number;
     section: string;
     schedule: { days: number[]; start_time: string; end_time: string };
 }) {
@@ -97,7 +97,7 @@ export async function createClass(data: {
 
 export async function updateClass(classId: string, data: {
     name: string;
-    grade: string;
+    grade: number;
     section: string;
     schedule: { days: number[]; start_time: string; end_time: string };
 }) {
