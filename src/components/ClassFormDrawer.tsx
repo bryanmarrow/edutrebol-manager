@@ -27,7 +27,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
     const isEdit = !!classData;
 
     const [name, setName] = useState("");
-    const [groupName, setGroupName] = useState("");
+    const [grade, setGrade] = useState("");
+    const [section, setSection] = useState("");
     const [selectedDays, setSelectedDays] = useState<number[]>([]);
     const [startTime, setStartTime] = useState("08:00");
     const [endTime, setEndTime] = useState("09:00");
@@ -36,13 +37,18 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
     useEffect(() => {
         if (classData) {
             setName(classData.name);
-            setGroupName(classData.group_name);
+            // Parse group_name "2° A" → grade="2°", section="A"
+            const parts = classData.group_name.split(" ");
+            const sec = parts.pop() || "";
+            setGrade(parts.join(" "));
+            setSection(sec);
             setSelectedDays(classData.schedule?.days || []);
             setStartTime(classData.schedule?.start_time || "08:00");
             setEndTime(classData.schedule?.end_time || "09:00");
         } else {
             setName("");
-            setGroupName("");
+            setGrade("");
+            setSection("");
             setSelectedDays([]);
             setStartTime("08:00");
             setEndTime("09:00");
@@ -58,8 +64,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        if (!name.trim() || !groupName.trim()) {
-            toast.error("Nombre y grupo son requeridos");
+        if (!name.trim() || !grade.trim() || !section.trim()) {
+            toast.error("Nombre, grado y grupo son requeridos");
             return;
         }
         if (selectedDays.length === 0) {
@@ -71,15 +77,16 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
             return;
         }
 
+        const group_name = `${grade.trim()} ${section.trim()}`;
         setSaving(true);
         try {
             const schedule = { days: selectedDays, start_time: startTime, end_time: endTime };
 
             if (isEdit && classData) {
-                await updateClass(classData.id, { name: name.trim(), group_name: groupName.trim(), schedule });
+                await updateClass(classData.id, { name: name.trim(), group_name, schedule });
                 toast.success("Clase actualizada");
             } else {
-                await createClass({ name: name.trim(), group_name: groupName.trim(), schedule });
+                await createClass({ name: name.trim(), group_name, schedule });
                 toast.success("Clase creada");
             }
 
@@ -127,7 +134,7 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-5 space-y-5">
+                <form onSubmit={handleSubmit} className="p-5 pb-10 space-y-5">
                     {/* Class name */}
                     <div>
                         <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
@@ -142,18 +149,32 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                         />
                     </div>
 
-                    {/* Group name */}
-                    <div>
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
-                            Grupo
-                        </label>
-                        <input
-                            type="text"
-                            value={groupName}
-                            onChange={(e) => setGroupName(e.target.value)}
-                            placeholder="ej. 1° A"
-                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
-                        />
+                    {/* Grade + Section */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <div>
+                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                                Grado
+                            </label>
+                            <input
+                                type="text"
+                                value={grade}
+                                onChange={(e) => setGrade(e.target.value)}
+                                placeholder="ej. 1°"
+                                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            />
+                        </div>
+                        <div>
+                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                                Grupo
+                            </label>
+                            <input
+                                type="text"
+                                value={section}
+                                onChange={(e) => setSection(e.target.value)}
+                                placeholder="ej. A"
+                                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            />
+                        </div>
                     </div>
 
                     {/* Days selector */}
@@ -209,7 +230,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                     <button
                         type="submit"
                         disabled={saving}
-                        className="w-full py-3 rounded-xl bg-indigo-600 text-white font-semibold text-sm disabled:opacity-60 active:scale-[0.98] transition-transform"
+                        style={{ backgroundColor: saving ? "#818cf8" : "#4f46e5" }}
+                        className="w-full py-3.5 rounded-xl text-white font-bold text-base shadow-lg shadow-indigo-200 disabled:opacity-60 active:scale-[0.98] transition-all"
                     >
                         {saving ? "Guardando..." : isEdit ? "Guardar cambios" : "Crear clase"}
                     </button>
