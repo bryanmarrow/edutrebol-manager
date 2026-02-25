@@ -37,11 +37,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
     useEffect(() => {
         if (classData) {
             setName(classData.name);
-            // Parse group_name "2° A" → grade="2°", section="A"
-            const parts = classData.group_name.split(" ");
-            const sec = parts.pop() || "";
-            setGrade(parts.join(" "));
-            setSection(sec);
+            setGrade(classData.grade);
+            setSection(classData.section);
             setSelectedDays(classData.schedule?.days || []);
             setStartTime(classData.schedule?.start_time || "08:00");
             setEndTime(classData.schedule?.end_time || "09:00");
@@ -77,16 +74,15 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
             return;
         }
 
-        const group_name = `${grade.trim()} ${section.trim()}`;
         setSaving(true);
         try {
             const schedule = { days: selectedDays, start_time: startTime, end_time: endTime };
 
             if (isEdit && classData) {
-                await updateClass(classData.id, { name: name.trim(), group_name, schedule });
+                await updateClass(classData.id, { name: name.trim(), grade: grade.trim(), section: section.trim(), schedule });
                 toast.success("Clase actualizada");
             } else {
-                await createClass({ name: name.trim(), group_name, schedule });
+                await createClass({ name: name.trim(), grade: grade.trim(), section: section.trim(), schedule });
                 toast.success("Clase creada");
             }
 

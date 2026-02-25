@@ -31,7 +31,8 @@ export async function getTeacherClasses(): Promise<ClassGroup[]> {
         .select(`
       id,
       name,
-      group_name,
+      grade,
+      section,
       schedule,
       students ( id )
     `)
@@ -46,7 +47,8 @@ export async function getTeacherClasses(): Promise<ClassGroup[]> {
     return (data || []).map((cls: any) => ({
         id: cls.id,
         name: cls.name,
-        group_name: cls.group_name,
+        grade: cls.grade,
+        section: cls.section,
         schedule: cls.schedule,
         student_count: cls.students?.length || 0,
     }));
@@ -72,7 +74,8 @@ export async function updateClassSchedule(classId: string, schedule: {
 
 export async function createClass(data: {
     name: string;
-    group_name: string;
+    grade: string;
+    section: string;
     schedule: { days: number[]; start_time: string; end_time: string };
 }) {
     const { data: { user } } = await supabase.auth.getUser();
@@ -94,7 +97,8 @@ export async function createClass(data: {
 
 export async function updateClass(classId: string, data: {
     name: string;
-    group_name: string;
+    grade: string;
+    section: string;
     schedule: { days: number[]; start_time: string; end_time: string };
 }) {
     const { data: { user } } = await supabase.auth.getUser();
@@ -261,7 +265,7 @@ export async function saveAttendanceRecords(
 export async function getClassInfo(classId: string) {
     const { data } = await supabase
         .from('classes')
-        .select('id, name, group_name, schedule')
+        .select('id, name, grade, section, schedule')
         .eq('id', classId)
         .single();
 

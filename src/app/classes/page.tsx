@@ -86,7 +86,7 @@ export default function ClassesPage() {
                                 key={cls.id}
                                 id={cls.id}
                                 name={cls.name}
-                                group={cls.group_name}
+                                group={`${cls.grade} ${cls.section}`}
                                 startTime={cls.schedule?.start_time || "--:--"}
                                 endTime={cls.schedule?.end_time || "--:--"}
                                 status="upcoming"
