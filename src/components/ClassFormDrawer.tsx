@@ -81,7 +81,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
 
             onSaved();
             onClose();
-        } catch {
+        } catch (err) {
+            console.error("Error saving class:", err);
             toast.error("Error al guardar la clase");
         } finally {
             setSaving(false);
