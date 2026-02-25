@@ -97,10 +97,14 @@ export async function updateClass(classId: string, data: {
     group_name: string;
     schedule: { days: number[]; start_time: string; end_time: string };
 }) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
+
     const { error } = await supabase
         .from('classes')
         .update(data)
-        .eq('id', classId);
+        .eq('id', classId)
+        .eq('teacher_id', user.id);
 
     if (error) {
         console.error('Error updating class:', error.message);
@@ -111,10 +115,14 @@ export async function updateClass(classId: string, data: {
 }
 
 export async function deleteClass(classId: string) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('No autenticado');
+
     const { error } = await supabase
         .from('classes')
         .delete()
-        .eq('id', classId);
+        .eq('id', classId)
+        .eq('teacher_id', user.id);
 
     if (error) {
         console.error('Error deleting class:', error.message);
