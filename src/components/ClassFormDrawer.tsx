@@ -66,6 +66,10 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
             toast.error("Selecciona al menos un día");
             return;
         }
+        if (endTime <= startTime) {
+            toast.error("La hora de fin debe ser mayor a la hora de inicio");
+            return;
+        }
 
         setSaving(true);
         try {
