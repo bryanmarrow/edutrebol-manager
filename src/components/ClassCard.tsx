@@ -21,14 +21,14 @@ export function ClassCard({ id, name, group, startTime, endTime, status, student
     const [confirmDelete, setConfirmDelete] = useState(false);
 
     const statusStyles = {
-        pending: "border-l-4 border-indigo-500 bg-white",
-        completed: "border-l-4 border-emerald-500 bg-slate-50 opacity-75",
-        upcoming: "border-l-4 border-slate-300 bg-white opacity-90",
+        pending: "border-l-4 border-[#BBF451] bg-white",
+        completed: "border-l-4 border-emerald-500 bg-[#F5F5F5] opacity-75",
+        upcoming: "border-l-4 border-[#E0E0E0] bg-white opacity-90",
     };
 
     return (
         <div className={cn(
-            "rounded-lg shadow-sm border border-slate-100 overflow-hidden",
+            "rounded-lg shadow-sm border border-[#E0E0E0] overflow-hidden",
             statusStyles[status]
         )}>
             {/* Main area — links to attendance */}
@@ -36,15 +36,15 @@ export function ClassCard({ id, name, group, startTime, endTime, status, student
                 <div className="flex items-center justify-between">
                     <div className="flex-1">
                         <div className="flex items-center gap-2 mb-1">
-                            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-slate-100 text-slate-600">
+                            <span className="text-xs font-semibold px-2 py-0.5 rounded bg-[#F5F5F5] text-[#181818] border border-[#E0E0E0]">
                                 {group}
                             </span>
-                            <span className="text-xs text-slate-400 flex items-center gap-1">
+                            <span className="text-xs text-[#8E8E8E] flex items-center gap-1">
                                 <Clock size={12} /> {startTime} - {endTime}
                             </span>
                         </div>
-                        <h3 className="text-lg font-bold text-slate-900">{name}</h3>
-                        <p className="text-sm text-slate-500">{studentCount} Alumnos</p>
+                        <h3 className="text-lg font-bold text-[#181818]">{name}</h3>
+                        <p className="text-sm text-[#8E8E8E]">{studentCount} Alumnos</p>
                     </div>
 
                     <div className="flex items-center gap-2">
@@ -54,7 +54,7 @@ export function ClassCard({ id, name, group, startTime, endTime, status, student
                             </span>
                         )}
                         {status === 'pending' && (
-                            <span className="w-8 h-8 rounded-full bg-indigo-50 text-indigo-600 flex items-center justify-center">
+                            <span className="w-8 h-8 rounded-full bg-[#BBF451] text-[#181818] flex items-center justify-center">
                                 <ChevronRight size={20} />
                             </span>
                         )}
@@ -63,10 +63,10 @@ export function ClassCard({ id, name, group, startTime, endTime, status, student
             </Link>
 
             {/* Bottom action bar */}
-            <div className="border-t border-slate-100 px-4 py-2 flex items-center justify-between">
+            <div className="border-t border-[#E0E0E0] px-4 py-2 flex items-center justify-between">
                 <Link
                     href={`/classes/${id}/students`}
-                    className="flex items-center gap-1.5 text-xs font-medium text-slate-500 hover:text-indigo-600 transition-colors px-2 py-1 rounded hover:bg-indigo-50"
+                    className="flex items-center gap-1.5 text-xs font-medium text-[#8E8E8E] hover:text-[#181818] transition-colors px-2 py-1 rounded hover:bg-[#BBF451]"
                 >
                     <Users size={14} />
                     Editar alumnos
@@ -76,7 +76,7 @@ export function ClassCard({ id, name, group, startTime, endTime, status, student
                     {onEdit && (
                         <button
                             onClick={onEdit}
-                            className="p-2 rounded-lg text-slate-400 hover:text-indigo-600 hover:bg-indigo-50 transition-colors"
+                            className="p-2 rounded-lg text-[#8E8E8E] hover:text-[#181818] hover:bg-[#BBF451]/20 transition-colors"
                             title="Editar clase"
                         >
                             <Pencil size={14} />
@@ -86,7 +86,7 @@ export function ClassCard({ id, name, group, startTime, endTime, status, student
                     {onDelete && !confirmDelete && (
                         <button
                             onClick={() => setConfirmDelete(true)}
-                            className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
+                            className="p-2 rounded-lg text-[#8E8E8E] hover:text-rose-600 hover:bg-rose-50 transition-colors"
                             title="Eliminar clase"
                         >
                             <Trash2 size={14} />
@@ -104,7 +104,7 @@ export function ClassCard({ id, name, group, startTime, endTime, status, student
                             </button>
                             <button
                                 onClick={() => setConfirmDelete(false)}
-                                className="text-xs px-2 py-1 bg-slate-100 text-slate-600 rounded font-medium"
+                                className="text-xs px-2 py-1 bg-[#F5F5F5] text-[#181818] rounded font-medium"
                             >
                                 No
                             </button>

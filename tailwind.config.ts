@@ -11,11 +11,22 @@ export default {
       colors: {
         background: "var(--background)",
         foreground: "var(--foreground)",
+        talkee: {
+          bg: '#F5F5F5',
+          surface: '#FFFFFF',
+          dark: '#181818',
+          gray: '#8E8E8E',
+          lightGray: '#E0E0E0',
+          lime: '#BBF451',
+          limeHover: '#AADE40',
+          blue: '#007AFF',
+          blueHover: '#0062CC',
+        },
         status: {
           present: {
-            DEFAULT: '#10B981', // emerald-500
-            bg: '#D1FAE5',      // emerald-100
-            text: '#047857',    // emerald-700
+            DEFAULT: '#BBF451',
+            bg: '#F0FFCC',
+            text: '#181818',
           },
           absent: {
             DEFAULT: '#F43F5E', // rose-500
@@ -23,14 +34,15 @@ export default {
             text: '#BE123C',    // rose-700
           },
           late: {
-            DEFAULT: '#FBBF24', // amber-400
-            bg: '#FEF3C7',      // amber-100
-            text: '#92400E',    // amber-800
+            DEFAULT: '#007AFF',
+            bg: '#DBEAFE',
+            text: '#1D4ED8',
           },
         },
       },
       fontFamily: {
         sans: ['var(--font-inter)', 'system-ui', 'sans-serif'],
+        heading: ['var(--font-outfit)', 'sans-serif'],
       },
       boxShadow: {
         'float': '0 4px 14px 0 rgba(0,0,0,0.1)',

@@ -102,38 +102,41 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
         <>
             {/* Backdrop */}
             <div
-                className="fixed inset-0 bg-black/40 z-40"
+                className="fixed inset-0 bg-black/40 z-[1000]"
                 onClick={onClose}
             />
 
             {/* Drawer */}
-            <div className="fixed bottom-0 left-0 right-0 z-50 bg-white rounded-t-2xl shadow-2xl max-h-[85vh] overflow-y-auto">
+            <div className="fixed bottom-0 left-0 right-0 z-[1001] bg-white rounded-t-3xl shadow-[0_-10px_40px_rgba(0,0,0,0.1)] flex flex-col max-h-[90dvh] overflow-hidden">
                 {/* Handle */}
-                <div className="flex justify-center pt-3 pb-1">
-                    <div className="w-10 h-1 rounded-full bg-slate-200" />
+                <div className="shrink-0 flex justify-center pt-4 pb-2 bg-white">
+                    <div className="w-12 h-1.5 rounded-full bg-[#E0E0E0]" />
                 </div>
 
                 {/* Header */}
-                <div className="flex items-center justify-between px-5 py-3 border-b border-slate-100">
-                    <div className="flex items-center gap-2">
-                        <BookOpen size={18} className="text-indigo-600" />
-                        <h2 className="text-base font-semibold text-slate-900">
+                <div className="shrink-0 flex items-center justify-between px-6 py-4 border-b border-[#E0E0E0] bg-white text-lg">
+                    <div className="flex items-center gap-3">
+                        <div className="p-2 bg-[#181818]/10 rounded-xl text-[#BBF451]">
+                            <BookOpen size={20} />
+                        </div>
+                        <h2 className="text-lg font-bold text-[#181818]">
                             {isEdit ? "Editar clase" : "Nueva clase"}
                         </h2>
                     </div>
                     <button
+                        type="button"
                         onClick={onClose}
-                        className="p-1.5 rounded-full hover:bg-slate-100 text-slate-400"
+                        className="p-2 rounded-full hover:bg-[#F5F5F5] text-[#8E8E8E] transition-colors"
                     >
-                        <X size={18} />
+                        <X size={20} />
                     </button>
                 </div>
 
                 {/* Form */}
-                <form onSubmit={handleSubmit} className="p-5 pb-10 space-y-5">
+                <form onSubmit={handleSubmit} className="p-6 pb-[calc(env(safe-area-inset-bottom,0px)+2rem)] space-y-6 overflow-y-auto overscroll-contain flex-1">
                     {/* Class name */}
                     <div>
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                        <label className="block text-xs font-semibold text-[#8E8E8E] uppercase tracking-wide mb-1.5">
                             Nombre de la clase
                         </label>
                         <input
@@ -141,13 +144,13 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                             value={name}
                             onChange={(e) => setName(e.target.value)}
                             placeholder="ej. Matemáticas I"
-                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-[#181818] text-sm focus:outline-none focus:ring-2 focus:ring-[#BBF451]"
                         />
                     </div>
 
                     {/* Grade selector */}
                     <div>
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
+                        <label className="block text-xs font-semibold text-[#8E8E8E] uppercase tracking-wide mb-2">
                             Grado
                         </label>
                         <div className="flex gap-3">
@@ -158,8 +161,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                                     onClick={() => setGrade(g)}
                                     className={`flex-1 py-2.5 rounded-xl text-sm font-bold transition-colors ${
                                         grade === g
-                                            ? "bg-indigo-600 text-white"
-                                            : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                            ? "bg-[#BBF451] text-[#181818]"
+                                            : "bg-[#F5F5F5] text-[#8E8E8E] hover:bg-[#E0E0E0]"
                                     }`}
                                 >
                                     {g === 1 ? "1ero" : g === 2 ? "2do" : "3ero"}
@@ -170,7 +173,7 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
 
                     {/* Section */}
                     <div>
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                        <label className="block text-xs font-semibold text-[#8E8E8E] uppercase tracking-wide mb-1.5">
                             Grupo
                         </label>
                         <input
@@ -178,13 +181,13 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                             value={section}
                             onChange={(e) => setSection(e.target.value)}
                             placeholder="ej. A"
-                            className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                            className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-[#181818] text-sm focus:outline-none focus:ring-2 focus:ring-[#BBF451]"
                         />
                     </div>
 
                     {/* Days selector */}
                     <div>
-                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-2">
+                        <label className="block text-xs font-semibold text-[#8E8E8E] uppercase tracking-wide mb-2">
                             Días
                         </label>
                         <div className="flex gap-2">
@@ -195,8 +198,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                                     onClick={() => toggleDay(day.value)}
                                     className={`w-10 h-10 rounded-full text-sm font-semibold transition-colors ${
                                         selectedDays.includes(day.value)
-                                            ? "bg-indigo-600 text-white"
-                                            : "bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                            ? "bg-[#BBF451] text-[#181818]"
+                                            : "bg-[#F5F5F5] text-[#8E8E8E] hover:bg-[#E0E0E0]"
                                     }`}
                                 >
                                     {day.label}
@@ -208,25 +211,25 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                     {/* Time range */}
                     <div className="grid grid-cols-2 gap-4">
                         <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                            <label className="block text-xs font-semibold text-[#8E8E8E] uppercase tracking-wide mb-1.5">
                                 Hora inicio
                             </label>
                             <input
                                 type="time"
                                 value={startTime}
                                 onChange={(e) => setStartTime(e.target.value)}
-                                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                                className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-[#181818] text-sm focus:outline-none focus:ring-2 focus:ring-[#BBF451]"
                             />
                         </div>
                         <div>
-                            <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wide mb-1.5">
+                            <label className="block text-xs font-semibold text-[#8E8E8E] uppercase tracking-wide mb-1.5">
                                 Hora fin
                             </label>
                             <input
                                 type="time"
                                 value={endTime}
                                 onChange={(e) => setEndTime(e.target.value)}
-                                className="w-full px-3 py-2.5 rounded-lg border border-slate-200 text-slate-900 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                                className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-[#181818] text-sm focus:outline-none focus:ring-2 focus:ring-[#BBF451]"
                             />
                         </div>
                     </div>
@@ -235,8 +238,8 @@ export function ClassFormDrawer({ open, onClose, onSaved, classData }: ClassForm
                     <button
                         type="submit"
                         disabled={saving}
-                        style={{ backgroundColor: saving ? "#818cf8" : "#4f46e5" }}
-                        className="w-full py-3.5 rounded-xl text-white font-bold text-base shadow-lg shadow-indigo-200 disabled:opacity-60 active:scale-[0.98] transition-all"
+                        style={{ backgroundColor: saving ? "#AADE40" : "#BBF451", color: "#181818" }}
+                        className="w-full py-3.5 rounded-xl font-bold text-base shadow-lg disabled:opacity-60 active:scale-[0.98] transition-all"
                     >
                         {saving ? "Guardando..." : isEdit ? "Guardar cambios" : "Crear clase"}
                     </button>

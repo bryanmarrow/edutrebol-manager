@@ -156,27 +156,27 @@ export default function StudentsPage() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-28">
+        <div className="min-h-screen bg-[#F5F5F5] pb-28">
             <Toaster position="top-center" richColors />
             <TopBar title={classInfo ? `${classInfo.name} — ${formatGrade(classInfo.grade)} ${classInfo.section}` : "Alumnos"} showBack />
 
             <main className="px-4 py-4">
                 {/* Stats bar */}
                 <div className="flex items-center gap-3 mb-4">
-                    <div className="flex items-center gap-1.5 text-sm text-slate-600">
+                    <div className="flex items-center gap-1.5 text-sm text-[#181818]">
                         <Users size={16} />
                         <span className="font-semibold">{activeCount}</span>
-                        <span className="text-slate-400">activos</span>
+                        <span className="text-[#8E8E8E]">activos</span>
                     </div>
                     {inactiveCount > 0 && (
-                        <div className="text-sm text-slate-400">
+                        <div className="text-sm text-[#8E8E8E]">
                             · {inactiveCount} baja{inactiveCount > 1 ? "s" : ""}
                         </div>
                     )}
                     <div className="flex-1" />
                     <button
                         onClick={openAddModal}
-                        className="flex items-center gap-1.5 bg-indigo-600 text-white px-3 py-2 rounded-lg text-sm font-medium hover:bg-indigo-700 active:scale-95 transition-all"
+                        className="flex items-center gap-1.5 bg-[#BBF451] text-[#181818] px-3 py-2 rounded-lg text-sm font-medium hover:bg-[#AADE40] active:scale-95 transition-all"
                     >
                         <UserPlus size={16} />
                         Agregar
@@ -185,13 +185,13 @@ export default function StudentsPage() {
 
                 {/* Search */}
                 <div className="relative mb-4">
-                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                    <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[#8E8E8E]" />
                     <input
                         type="text"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                         placeholder="Buscar alumno..."
-                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-slate-200 bg-white text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                        className="w-full pl-9 pr-4 py-2.5 rounded-lg border border-[#E0E0E0] bg-white text-sm text-[#181818] placeholder:text-[#8E8E8E] focus:outline-none focus:ring-2 focus:ring-[#BBF451] focus:border-transparent"
                     />
                 </div>
 
@@ -199,36 +199,36 @@ export default function StudentsPage() {
                 {loading ? (
                     <div className="space-y-2">
                         {[1, 2, 3, 4, 5].map((i) => (
-                            <div key={i} className="h-16 bg-white rounded-lg animate-pulse border border-slate-100" />
+                            <div key={i} className="h-16 bg-white rounded-lg animate-pulse border border-[#E0E0E0]" />
                         ))}
                     </div>
                 ) : filtered.length === 0 ? (
-                    <div className="bg-white p-8 rounded-lg border border-slate-100 text-center">
-                        <Users size={32} className="mx-auto text-slate-300 mb-2" />
-                        <p className="text-slate-500 text-sm">
+                    <div className="bg-white p-8 rounded-lg border border-[#E0E0E0] text-center">
+                        <Users size={32} className="mx-auto text-[#8E8E8E] mb-2" />
+                        <p className="text-[#8E8E8E] text-sm">
                             {search ? "No se encontraron resultados" : "No hay alumnos registrados"}
                         </p>
                     </div>
                 ) : (
-                    <div className="bg-white rounded-lg border border-slate-100 divide-y divide-slate-100 overflow-hidden">
+                    <div className="bg-white rounded-lg border border-[#E0E0E0] divide-y divide-[#E0E0E0] overflow-hidden">
                         {filtered.map((student, idx) => (
                             <div
                                 key={student.id}
-                                className={`flex items-center px-4 py-3 gap-3 ${!student.active ? "opacity-50 bg-slate-50" : ""}`}
+                                className={`flex items-center px-4 py-3 gap-3 ${!student.active ? "opacity-50 bg-[#F5F5F5]" : ""}`}
                             >
                                 {/* Number */}
-                                <span className="text-xs font-mono text-slate-400 w-6 text-right shrink-0">
+                                <span className="text-xs font-mono text-[#8E8E8E] w-6 text-right shrink-0">
                                     {idx + 1}
                                 </span>
 
                                 {/* Info */}
                                 <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-slate-900 truncate">
+                                    <p className="text-sm font-medium text-[#181818] truncate">
                                         {student.last_name}{" "}
-                                        <span className="text-slate-600 font-normal">{student.first_name}</span>
+                                        <span className="text-[#8E8E8E] font-normal">{student.first_name}</span>
                                     </p>
                                     {student.student_id_official && (
-                                        <p className="text-xs text-slate-400">{student.student_id_official}</p>
+                                        <p className="text-xs text-[#8E8E8E]">{student.student_id_official}</p>
                                     )}
                                     {!student.active && (
                                         <span className="text-[10px] font-semibold text-red-500 uppercase">Baja</span>
@@ -247,7 +247,7 @@ export default function StudentsPage() {
                                         </button>
                                         <button
                                             onClick={() => setDeletingId(null)}
-                                            className="p-1.5 rounded-md bg-slate-100 text-slate-500 hover:bg-slate-200"
+                                            className="p-1.5 rounded-md bg-[#F5F5F5] text-[#8E8E8E] hover:bg-[#E0E0E0]"
                                         >
                                             <X size={14} />
                                         </button>
@@ -256,20 +256,20 @@ export default function StudentsPage() {
                                     <div className="flex items-center gap-1">
                                         <button
                                             onClick={() => handleToggleActive(student)}
-                                            className={`p-1.5 rounded-md ${student.active ? "text-emerald-600 hover:bg-emerald-50" : "text-slate-400 hover:bg-slate-100"}`}
+                                            className={`p-1.5 rounded-md ${student.active ? "text-[#181818] hover:bg-[#BBF451]/20" : "text-[#8E8E8E] hover:bg-[#F5F5F5]"}`}
                                             title={student.active ? "Dar de baja" : "Reactivar"}
                                         >
                                             {student.active ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
                                         </button>
                                         <button
                                             onClick={() => openEditModal(student)}
-                                            className="p-1.5 rounded-md text-slate-500 hover:bg-slate-100"
+                                            className="p-1.5 rounded-md text-[#8E8E8E] hover:bg-[#F5F5F5]"
                                         >
                                             <Pencil size={14} />
                                         </button>
                                         <button
                                             onClick={() => setDeletingId(student.id)}
-                                            className="p-1.5 rounded-md text-slate-400 hover:bg-red-50 hover:text-red-500"
+                                            className="p-1.5 rounded-md text-[#8E8E8E] hover:bg-red-50 hover:text-red-500"
                                         >
                                             <Trash2 size={14} />
                                         </button>
@@ -288,44 +288,44 @@ export default function StudentsPage() {
                 <div className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm">
                     <div className="bg-white w-full sm:max-w-md rounded-t-2xl sm:rounded-2xl p-6 shadow-xl animate-in slide-in-from-bottom duration-300">
                         <div className="flex items-center justify-between mb-5">
-                            <h3 className="text-lg font-bold text-slate-900">
+                            <h3 className="text-lg font-bold text-[#181818]">
                                 {editingStudent ? "Editar Alumno" : "Agregar Alumno"}
                             </h3>
-                            <button onClick={() => setShowModal(false)} className="p-1 rounded-md hover:bg-slate-100">
-                                <X size={20} className="text-slate-400" />
+                            <button onClick={() => setShowModal(false)} className="p-1 rounded-md hover:bg-[#F5F5F5]">
+                                <X size={20} className="text-[#8E8E8E]" />
                             </button>
                         </div>
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Apellidos *</label>
+                                <label className="block text-sm font-medium text-[#181818] mb-1">Apellidos *</label>
                                 <input
                                     type="text"
                                     value={formLastName}
                                     onChange={(e) => setFormLastName(e.target.value)}
                                     placeholder="Ej. García López"
                                     autoFocus
-                                    className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-sm text-[#181818] placeholder:text-[#8E8E8E] focus:outline-none focus:ring-2 focus:ring-[#BBF451] focus:border-transparent"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Nombre(s) *</label>
+                                <label className="block text-sm font-medium text-[#181818] mb-1">Nombre(s) *</label>
                                 <input
                                     type="text"
                                     value={formFirstName}
                                     onChange={(e) => setFormFirstName(e.target.value)}
                                     placeholder="Ej. María Fernanda"
-                                    className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-sm text-[#181818] placeholder:text-[#8E8E8E] focus:outline-none focus:ring-2 focus:ring-[#BBF451] focus:border-transparent"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-slate-700 mb-1">Matrícula</label>
+                                <label className="block text-sm font-medium text-[#181818] mb-1">Matrícula</label>
                                 <input
                                     type="text"
                                     value={formIdOfficial}
                                     onChange={(e) => setFormIdOfficial(e.target.value)}
                                     placeholder="Opcional"
-                                    className="w-full px-3 py-2.5 rounded-lg border border-slate-300 text-sm text-slate-900 placeholder:text-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent"
+                                    className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-sm text-[#181818] placeholder:text-[#8E8E8E] focus:outline-none focus:ring-2 focus:ring-[#BBF451] focus:border-transparent"
                                 />
                             </div>
                         </div>
@@ -333,17 +333,17 @@ export default function StudentsPage() {
                         <div className="flex gap-3 mt-6">
                             <button
                                 onClick={() => setShowModal(false)}
-                                className="flex-1 py-2.5 rounded-lg border border-slate-300 text-sm font-medium text-slate-700 hover:bg-slate-50 transition-colors"
+                                className="flex-1 py-2.5 rounded-lg border border-[#E0E0E0] text-sm font-medium text-[#181818] hover:bg-[#F5F5F5] transition-colors"
                             >
                                 Cancelar
                             </button>
                             <button
                                 onClick={handleSave}
                                 disabled={saving}
-                                className="flex-1 py-2.5 rounded-lg bg-indigo-600 text-white text-sm font-semibold hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                className="flex-1 py-2.5 rounded-lg bg-[#BBF451] text-[#181818] text-sm font-semibold hover:bg-[#AADE40] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
                             >
                                 {saving ? (
-                                    <div className="h-4 w-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                                    <div className="h-4 w-4 border-2 border-[#181818]/30 border-t-[#181818] rounded-full animate-spin" />
                                 ) : (
                                     <Check size={16} />
                                 )}

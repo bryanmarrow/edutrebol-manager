@@ -54,14 +54,14 @@ export default function ClassesPage() {
     }
 
     return (
-        <div className="min-h-screen bg-slate-50 pb-28">
+        <div className="min-h-screen bg-[#F5F5F5] pb-28">
             <TopBar title="Mis Grupos" />
 
             {/* Toolbar */}
             <div className="px-4 pt-4 pb-2">
                 <button
                     onClick={handleNewClass}
-                    className="flex items-center gap-2 w-full justify-center py-2.5 rounded-xl bg-indigo-600 text-white font-semibold text-sm active:scale-[0.98] transition-transform shadow-sm"
+                    className="flex items-center gap-2 w-full justify-center py-2.5 rounded-xl bg-[#BBF451] text-[#181818] font-semibold text-sm active:scale-[0.98] transition-transform shadow-sm"
                 >
                     <Plus size={16} />
                     Nueva clase
@@ -72,13 +72,13 @@ export default function ClassesPage() {
                 {loading ? (
                     <div className="space-y-3">
                         {[1, 2, 3].map((i) => (
-                            <div key={i} className="h-24 bg-white rounded-lg animate-pulse border border-slate-100" />
+                            <div key={i} className="h-24 bg-white rounded-lg animate-pulse border border-[#E0E0E0]" />
                         ))}
                     </div>
                 ) : classes.length === 0 ? (
-                    <div className="bg-white p-6 rounded-lg border border-slate-100 text-center">
-                        <p className="text-slate-500 mb-1">No hay grupos registrados.</p>
-                        <p className="text-xs text-slate-400">Usa el botón de arriba para crear tu primera clase.</p>
+                    <div className="bg-white p-6 rounded-lg border border-[#E0E0E0] text-center">
+                        <p className="text-[#8E8E8E] mb-1">No hay grupos registrados.</p>
+                        <p className="text-xs text-[#8E8E8E]">Usa el botón de arriba para crear tu primera clase.</p>
                     </div>
                 ) : (
                     <div className="grid gap-4">

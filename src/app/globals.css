@@ -1,16 +1,34 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
+
+@theme {
+  --color-status-present: #BBF451;
+  --color-status-present-bg: #F0FFCC;
+  --color-status-present-text: #181818;
+
+  --color-status-absent: #F43F5E;
+  /* rose-500 */
+  --color-status-absent-bg: #FFE4E6;
+  /* rose-100 */
+  --color-status-absent-text: #BE123C;
+  /* rose-700 */
+
+  --color-status-late: #007AFF;
+  --color-status-late-bg: #DBEAFE;
+  --color-status-late-text: #1D4ED8;
+
+  --spacing-safe-bottom: env(safe-area-inset-bottom);
+}
 
 :root {
-  --background: #f8fafc;
-  --foreground: #0f172a;
+  --background: #F5F5F5;
+  --foreground: #181818;
 }
 
 @layer utilities {
   .pb-safe {
     padding-bottom: env(safe-area-inset-bottom);
   }
+
   .pt-safe {
     padding-top: env(safe-area-inset-top);
   }

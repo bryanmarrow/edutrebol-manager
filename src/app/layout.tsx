@@ -1,8 +1,9 @@
 import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import { Inter, Outfit } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const outfit = Outfit({ subsets: ["latin"], variable: "--font-outfit" });
 
 export const metadata: Metadata = {
   title: "Asistencia Secu",
@@ -21,7 +22,7 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false, // Prevent zoom on input focus for iOS
   viewportFit: "cover",
-  themeColor: "#0f172a", // slate-900
+  themeColor: "#181818",
 };
 
 export default function RootLayout({
@@ -31,7 +32,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es">
-      <body className={`${inter.variable} font-sans antialiased bg-slate-50 text-slate-900 min-h-screen pb-safe`}>
+      <body className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-[#F5F5F5] text-[#181818] min-h-screen pb-safe`}>
         {children}
       </body>
     </html>

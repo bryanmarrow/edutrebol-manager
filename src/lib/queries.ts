@@ -168,7 +168,7 @@ export async function getStudentsByClass(classId: string): Promise<StudentWithSt
         .select('id, first_name, last_name, student_id_official, avatar_url, active')
         .eq('class_id', classId)
         .eq('active', true)
-        .order('last_name');
+        .order('created_at');
 
     if (error) {
         console.error('Error fetching students:', error);
@@ -281,7 +281,7 @@ export async function getAllStudentsByClass(classId: string) {
         .from('students')
         .select('*')
         .eq('class_id', classId)
-        .order('last_name');
+        .order('created_at');
 
     if (error) {
         console.error('Error fetching all students:', error.message);

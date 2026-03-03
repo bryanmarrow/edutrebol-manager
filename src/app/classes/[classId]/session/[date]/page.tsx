@@ -89,7 +89,12 @@ export default function AttendanceSessionPage() {
         isLoaded,
     } = useAttendance(storageKey, initialData);
 
-    // 3. Save to Supabase
+    // 3a. Finish without saving
+    const handleFinish = () => {
+        router.push("/dashboard");
+    };
+
+    // 3b. Save to Supabase
     const handleSave = async () => {
         if (!sessionId) {
             toast.error("No se pudo crear la sesión");
@@ -160,6 +165,7 @@ export default function AttendanceSessionPage() {
 
             <SessionFooter
                 onSave={handleSave}
+                onFinish={handleFinish}
                 isSaving={isSaving}
                 hasChanges={hasUnsavedChanges}
             />
