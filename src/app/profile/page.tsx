@@ -40,20 +40,25 @@ export default function ProfilePage() {
 
     useEffect(() => {
         async function loadProfile() {
-            const { data } = await supabase.auth.getSession();
-            if (!data.session) {
-                router.replace("/login");
-                return;
-            }
+            try {
+                const { data } = await supabase.auth.getSession();
+                if (!data.session) {
+                    router.replace("/login");
+                    return;
+                }
 
-            const currentTeacher = await getCurrentTeacher();
-            if (!currentTeacher) {
-                router.replace("/login");
-                return;
-            }
+                const currentTeacher = await getCurrentTeacher();
+                if (!currentTeacher) {
+                    router.replace("/login");
+                    return;
+                }
 
-            setTeacher(currentTeacher);
-            setLoading(false);
+                setTeacher(currentTeacher);
+            } catch (err) {
+                console.error("Error loading profile:", err);
+            } finally {
+                setLoading(false);
+            }
         }
 
         loadProfile();
