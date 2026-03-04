@@ -11,6 +11,7 @@ import {
     createStudent,
     updateStudent,
     deleteStudent,
+    bulkCreateStudents,
 } from "@/lib/queries";
 import { formatGrade } from "@/lib/utils";
 import {
@@ -23,6 +24,7 @@ import {
     Users,
     ToggleLeft,
     ToggleRight,
+    Upload,
 } from "lucide-react";
 
 interface Student {
@@ -54,6 +56,11 @@ export default function StudentsPage() {
 
     // Delete confirmation
     const [deletingId, setDeletingId] = useState<string | null>(null);
+
+    // Bulk import
+    const [showBulkModal, setShowBulkModal] = useState(false);
+    const [bulkText, setBulkText] = useState("");
+    const [bulkImporting, setBulkImporting] = useState(false);
 
     const loadData = useCallback(async () => {
         const [info, data] = await Promise.all([
@@ -155,6 +162,45 @@ export default function StudentsPage() {
         }
     };
 
+    type ParsedRow =
+        | { raw: string; valid: false }
+        | { raw: string; valid: true; last_name: string; first_name: string };
+
+    function parseBulkText(text: string): ParsedRow[] {
+        return text
+            .split("\n")
+            .map((line) => line.trim())
+            .filter(Boolean)
+            .map((line) => {
+                const words = line.split(/\s+/);
+                if (words.length < 3) return { raw: line, valid: false as const };
+                return {
+                    raw: line,
+                    valid: true as const,
+                    last_name: `${words[0]} ${words[1]}`,
+                    first_name: words.slice(2).join(" "),
+                };
+            });
+    }
+
+    async function handleBulkImport() {
+        const parsed = parseBulkText(bulkText);
+        const valid = parsed.filter((r): r is Extract<ParsedRow, { valid: true }> => r.valid);
+        if (!valid.length) return;
+
+        setBulkImporting(true);
+        try {
+            await bulkCreateStudents(classId, valid);
+            toast.success(`${valid.length} alumno${valid.length > 1 ? "s" : ""} importado${valid.length > 1 ? "s" : ""}`);
+            setShowBulkModal(false);
+            setBulkText("");
+            await loadData();
+        } catch {
+            toast.error("Error al importar alumnos");
+        }
+        setBulkImporting(false);
+    }
+
     return (
         <div className="min-h-screen bg-[#F5F5F5] pb-28">
             <Toaster position="top-center" richColors />
@@ -174,6 +220,13 @@ export default function StudentsPage() {
                         </div>
                     )}
                     <div className="flex-1" />
+                    <button
+                        onClick={() => setShowBulkModal(true)}
+                        className="flex items-center gap-1.5 border border-[#E0E0E0] bg-white text-[#181818] px-3 py-2 rounded-lg text-sm font-medium hover:bg-[#F5F5F5] active:scale-95 transition-all"
+                    >
+                        <Upload size={16} />
+                        En lote
+                    </button>
                     <button
                         onClick={openAddModal}
                         className="flex items-center gap-1.5 bg-[#BBF451] text-[#181818] px-3 py-2 rounded-lg text-sm font-medium hover:bg-[#AADE40] active:scale-95 transition-all"
@@ -353,6 +406,82 @@ export default function StudentsPage() {
                     </div>
                 </div>
             )}
+
+            {/* Modal — Carga en lote */}
+            {showBulkModal && (() => {
+                const parsed = bulkText.trim() ? parseBulkText(bulkText) : [];
+                const validRows = parsed.filter((r): r is Extract<ParsedRow, { valid: true }> => r.valid);
+                const invalidCount = parsed.length - validRows.length;
+                return (
+                    <div className="fixed inset-0 z-[1000] flex items-end sm:items-center justify-center bg-black/40 backdrop-blur-sm">
+                        <div className="bg-white w-full sm:max-w-lg rounded-t-2xl sm:rounded-2xl p-6 shadow-xl animate-in slide-in-from-bottom duration-300 max-h-[85vh] flex flex-col">
+                            <div className="flex items-center justify-between mb-4">
+                                <h3 className="text-lg font-bold text-[#181818]">Carga en lote</h3>
+                                <button onClick={() => setShowBulkModal(false)} className="p-1 rounded-md hover:bg-[#F5F5F5]">
+                                    <X size={20} className="text-[#8E8E8E]" />
+                                </button>
+                            </div>
+
+                            <p className="text-xs text-[#8E8E8E] mb-3">
+                                Pega la lista del Excel. Formato:{" "}
+                                <span className="font-mono bg-[#F5F5F5] px-1 rounded">APELLIDO1 APELLIDO2 NOMBRE(S)</span>
+                            </p>
+
+                            <textarea
+                                value={bulkText}
+                                onChange={(e) => setBulkText(e.target.value)}
+                                placeholder={"AGUILAR CAMACHO MELISSA JATZITI\nALDANA MORALES YAZMIN\n..."}
+                                rows={6}
+                                className="w-full px-3 py-2.5 rounded-lg border border-[#E0E0E0] text-sm font-mono text-[#181818] placeholder:text-[#8E8E8E] focus:outline-none focus:ring-2 focus:ring-[#BBF451] focus:border-transparent resize-none"
+                            />
+
+                            {parsed.length > 0 && (
+                                <div className="mt-3 overflow-y-auto flex-1">
+                                    <p className="text-xs font-semibold text-[#8E8E8E] mb-2">
+                                        Vista previa — {validRows.length} válidos{invalidCount > 0 ? `, ${invalidCount} con error` : ""}
+                                    </p>
+                                    <div className="rounded-lg border border-[#E0E0E0] divide-y divide-[#E0E0E0] overflow-hidden">
+                                        {parsed.map((row, i) =>
+                                            row.valid ? (
+                                                <div key={i} className="flex gap-2 px-3 py-2 text-xs">
+                                                    <span className="text-[#181818] font-medium w-36 truncate shrink-0">{row.last_name}</span>
+                                                    <span className="text-[#8E8E8E]">{row.first_name}</span>
+                                                </div>
+                                            ) : (
+                                                <div key={i} className="flex gap-2 px-3 py-2 text-xs bg-red-50">
+                                                    <span className="text-red-500 font-mono truncate">{row.raw}</span>
+                                                    <span className="text-red-400 shrink-0">← inválido</span>
+                                                </div>
+                                            )
+                                        )}
+                                    </div>
+                                </div>
+                            )}
+
+                            <div className="flex gap-3 mt-4 shrink-0">
+                                <button
+                                    onClick={() => setShowBulkModal(false)}
+                                    className="flex-1 py-2.5 rounded-lg border border-[#E0E0E0] text-sm font-medium text-[#181818] hover:bg-[#F5F5F5] transition-colors"
+                                >
+                                    Cancelar
+                                </button>
+                                <button
+                                    onClick={handleBulkImport}
+                                    disabled={bulkImporting || validRows.length === 0}
+                                    className="flex-1 py-2.5 rounded-lg bg-[#BBF451] text-[#181818] text-sm font-semibold hover:bg-[#AADE40] active:scale-[0.98] transition-all disabled:opacity-50 flex items-center justify-center gap-2"
+                                >
+                                    {bulkImporting ? (
+                                        <div className="h-4 w-4 border-2 border-[#181818]/30 border-t-[#181818] rounded-full animate-spin" />
+                                    ) : (
+                                        <Check size={16} />
+                                    )}
+                                    {bulkImporting ? "Importando..." : `Importar ${validRows.length} alumno${validRows.length !== 1 ? "s" : ""}`}
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                );
+            })()}
         </div>
     );
 }

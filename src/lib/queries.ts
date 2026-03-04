@@ -13,7 +13,17 @@ export async function getCurrentTeacher() {
         .from('teachers')
         .select('*')
         .eq('id', user.id)
-        .single();
+        .maybeSingle();
+
+    if (!data) {
+        // El usuario existe en auth pero no tiene registro en teachers — crearlo
+        const { data: created } = await supabase
+            .from('teachers')
+            .insert({ id: user.id, email: user.email ?? '' })
+            .select()
+            .maybeSingle();
+        return created;
+    }
 
     return data;
 }
@@ -343,4 +353,23 @@ export async function deleteStudent(studentId: string) {
     }
 
     return true;
+}
+
+export async function bulkCreateStudents(
+    classId: string,
+    students: { first_name: string; last_name: string }[]
+) {
+    const rows = students.map((s) => ({
+        first_name: s.first_name,
+        last_name: s.last_name,
+        class_id: classId,
+        active: true,
+    }));
+
+    const { error } = await supabase.from('students').insert(rows);
+
+    if (error) {
+        console.error('Error en carga en lote:', error.message);
+        throw error;
+    }
 }

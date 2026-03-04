@@ -49,7 +49,9 @@ export default function ProfilePage() {
 
                 const currentTeacher = await getCurrentTeacher();
                 if (!currentTeacher) {
-                    router.replace("/login");
+                    // Hay sesión válida pero falló la carga del perfil — no cerrar sesión
+                    console.error("No se pudo cargar el perfil del profesor");
+                    setLoading(false);
                     return;
                 }
 
