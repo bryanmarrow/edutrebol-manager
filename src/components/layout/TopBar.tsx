@@ -2,9 +2,10 @@
 
 import { useState, useEffect } from "react";
 
-import { Bell, Cloud, CloudOff, ArrowLeft } from "lucide-react";
+import { Cloud, CloudOff, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 
 interface TopBarProps {
     userName?: string;
@@ -49,9 +50,13 @@ export function TopBar({ userName = "Profesor", isOnline = true, className, titl
                 <button className="p-2 text-[#8E8E8E] hover:text-white rounded-full hover:bg-white/10 transition-colors">
                     {isOnline ? <Cloud size={20} /> : <CloudOff size={20} className="text-[#8E8E8E]" />}
                 </button>
-                <div className="w-8 h-8 bg-[#BBF451] rounded-full flex items-center justify-center text-[#181818] font-semibold text-sm">
+                <Link
+                    href="/profile"
+                    className="w-8 h-8 bg-[#BBF451] rounded-full flex items-center justify-center text-[#181818] font-semibold text-sm hover:bg-[#AADE40] transition-colors"
+                    title="Mi perfil"
+                >
                     {userName.charAt(0)}
-                </div>
+                </Link>
             </div>
         </header>
     );

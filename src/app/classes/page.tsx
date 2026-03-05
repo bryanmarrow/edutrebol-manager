@@ -82,20 +82,24 @@ export default function ClassesPage() {
                     </div>
                 ) : (
                     <div className="grid gap-4">
-                        {classes.map((cls) => (
-                            <ClassCard
-                                key={cls.id}
-                                id={cls.id}
-                                name={cls.name}
-                                group={`${formatGrade(cls.grade)} ${cls.section}`}
-                                startTime={cls.schedule?.start_time || "--:--"}
-                                endTime={cls.schedule?.end_time || "--:--"}
-                                status="upcoming"
-                                studentCount={cls.student_count || 0}
-                                onEdit={() => handleEditClass(cls)}
-                                onDelete={() => handleDeleteClass(cls.id)}
-                            />
-                        ))}
+                        {classes.map((cls) => {
+                            const firstSlot = cls.schedule?.[0];
+                            const extraSlots = (cls.schedule?.length ?? 0) - 1;
+                            return (
+                                <ClassCard
+                                    key={cls.id}
+                                    id={cls.id}
+                                    name={cls.name}
+                                    group={`${formatGrade(cls.grade)} ${cls.section}`}
+                                    startTime={firstSlot?.start_time || "--:--"}
+                                    endTime={firstSlot ? `${firstSlot.end_time}${extraSlots > 0 ? ` +${extraSlots}` : ""}` : "--:--"}
+                                    status="upcoming"
+                                    studentCount={cls.student_count || 0}
+                                    onEdit={() => handleEditClass(cls)}
+                                    onDelete={() => handleDeleteClass(cls.id)}
+                                />
+                            );
+                        })}
                     </div>
                 )}
             </main>

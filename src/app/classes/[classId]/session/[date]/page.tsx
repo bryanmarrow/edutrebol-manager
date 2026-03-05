@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import { Toaster, toast } from "sonner";
+import { toast } from "sonner";
 import { SessionHeader } from "@/components/session/SessionHeader";
 import { SessionFooter } from "@/components/session/SessionFooter";
 import { StudentRow } from "@/components/StudentRow";
@@ -140,8 +140,6 @@ export default function AttendanceSessionPage() {
 
     return (
         <div className="min-h-screen bg-slate-50 pb-24">
-            <Toaster position="top-center" richColors />
-
             <SessionHeader
                 access_className={className || "Clase"}
                 groupName={groupName || "Grupo"}

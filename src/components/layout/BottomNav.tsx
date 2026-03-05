@@ -1,6 +1,6 @@
 "use client";
 
-import { ClipboardList, Users, CalendarDays, BarChart3, Settings } from "lucide-react";
+import { ClipboardList, BookOpen, GraduationCap, CalendarDays, FileText } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -10,10 +10,10 @@ export function BottomNav() {
 
     const navItems = [
         { label: "Hoy", icon: ClipboardList, href: "/dashboard" },
-        { label: "Grupos", icon: Users, href: "/classes" },
+        { label: "Clases", icon: BookOpen, href: "/classes" },
+        { label: "Grupos", icon: GraduationCap, href: "/groups" },
         { label: "Horario", icon: CalendarDays, href: "/schedule" },
-        { label: "Reportes", icon: BarChart3, href: "/reports" },
-        { label: "Perfil", icon: Settings, href: "/profile" },
+        { label: "Reportes", icon: FileText, href: "/reports" },
     ];
 
     return (

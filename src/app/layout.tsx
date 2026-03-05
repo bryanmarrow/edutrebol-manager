@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Inter, Outfit } from "next/font/google";
+import { Toaster } from "sonner";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
@@ -33,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="es">
       <body className={`${inter.variable} ${outfit.variable} font-sans antialiased bg-[#F5F5F5] text-[#181818] min-h-screen pb-safe`}>
+        <Toaster position="top-center" richColors />
         {children}
       </body>
     </html>
