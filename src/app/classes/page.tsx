@@ -14,14 +14,21 @@ import type { ClassGroup } from "@/types";
 export default function ClassesPage() {
     const [classes, setClasses] = useState<ClassGroup[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [editingClass, setEditingClass] = useState<ClassGroup | null>(null);
 
     const loadClasses = useCallback(async () => {
         setLoading(true);
-        const data = await getTeacherClasses();
-        setClasses(data);
-        setLoading(false);
+        setLoadError(null);
+        try {
+            const data = await getTeacherClasses();
+            setClasses(data);
+        } catch (err: any) {
+            setLoadError(err?.message ?? 'Error desconocido al cargar clases');
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     useEffect(() => {
@@ -74,6 +81,12 @@ export default function ClassesPage() {
                         {[1, 2, 3].map((i) => (
                             <div key={i} className="h-24 bg-white rounded-lg animate-pulse border border-[#E0E0E0]" />
                         ))}
+                    </div>
+                ) : loadError ? (
+                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
+                        <p className="text-sm font-semibold text-rose-700 mb-1">Error al cargar clases</p>
+                        <p className="text-xs text-rose-600 font-mono break-all">{loadError}</p>
+                        <button onClick={loadClasses} className="mt-3 text-xs font-semibold text-rose-700 underline">Reintentar</button>
                     </div>
                 ) : classes.length === 0 ? (
                     <div className="bg-white p-6 rounded-lg border border-[#E0E0E0] text-center">

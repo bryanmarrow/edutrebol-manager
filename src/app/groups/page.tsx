@@ -15,6 +15,7 @@ const SCHOOL_YEAR = "2025-2026";
 export default function GroupsPage() {
     const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [saving, setSaving] = useState(false);
     const [confirmDeleteId, setConfirmDeleteId] = useState<string | null>(null);
@@ -25,9 +26,15 @@ export default function GroupsPage() {
 
     const loadGroups = useCallback(async () => {
         setLoading(true);
-        const data = await getAllGroups();
-        setGroups(data);
-        setLoading(false);
+        setLoadError(null);
+        try {
+            const data = await getAllGroups();
+            setGroups(data);
+        } catch (err: any) {
+            setLoadError(err?.message ?? 'Error desconocido al cargar grupos');
+        } finally {
+            setLoading(false);
+        }
     }, []);
 
     useEffect(() => {
@@ -92,6 +99,12 @@ export default function GroupsPage() {
                         {[1, 2, 3].map((i) => (
                             <div key={i} className="h-20 bg-white rounded-xl animate-pulse border border-[#E0E0E0]" />
                         ))}
+                    </div>
+                ) : loadError ? (
+                    <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
+                        <p className="text-sm font-semibold text-rose-700 mb-1">Error al cargar grupos</p>
+                        <p className="text-xs text-rose-600 font-mono break-all">{loadError}</p>
+                        <button onClick={loadGroups} className="mt-3 text-xs font-semibold text-rose-700 underline">Reintentar</button>
                     </div>
                 ) : groups.length === 0 ? (
                     <div className="bg-white p-8 rounded-xl border border-[#E0E0E0] text-center">

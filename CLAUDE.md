@@ -63,7 +63,8 @@ Applied migrations (in order):
 3. `src/migration_grade_section.sql`
 4. `src/migration_teacher_insert_policy.sql`
 5. `src/migration_groups.sql` — adds `groups` table; `group_id` on classes and students
-6. `src/migration_conduct_reports.sql` — adds `conduct_reports`, `report_shares`; RPC `get_shared_group_reports`
+6. `src/migration_students_class_nullable.sql` — makes `students.class_id` nullable (students now belong to groups)
+7. `src/migration_conduct_reports.sql` — adds `conduct_reports`, `report_shares`; RPC `get_shared_group_reports`
 
 **Key schema rules:**
 - `grade` is always `integer` (1, 2, 3) — use `formatGrade()` for display

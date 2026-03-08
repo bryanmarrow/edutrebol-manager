@@ -55,7 +55,7 @@ export async function getAllGroups(): Promise<Group[]> {
 
     if (error) {
         console.error('Error fetching groups:', error);
-        return [];
+        throw error;
     }
 
     return (data || []).map((g: any) => ({
@@ -152,7 +152,7 @@ export async function getTeacherClasses(): Promise<ClassGroup[]> {
 
     if (error) {
         console.error('Error fetching classes:', error);
-        return [];
+        throw error;
     }
 
     return (data || []).map((cls: any) => {
@@ -593,8 +593,8 @@ export async function getConductReports(filters?: {
     const { data, error } = await query;
 
     if (error) {
-        console.error('Error fetching conduct reports:', error.message);
-        return [];
+        console.error('Error fetching conduct reports:', error);
+        throw error;
     }
 
     return (data || []).map((r: any) => ({

@@ -21,8 +21,8 @@ export default function DashboardPage() {
     useEffect(() => {
         async function load() {
             const [teacher, today] = await Promise.all([
-                getCurrentTeacher(),
-                getTodayClasses(),
+                getCurrentTeacher().catch(() => null),
+                getTodayClasses().catch(() => []),
             ]);
             if (teacher?.full_name) setTeacherName(teacher.full_name);
             setTodayClasses(today);

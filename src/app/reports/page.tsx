@@ -15,6 +15,7 @@ export default function ReportsPage() {
     const [reports, setReports] = useState<ConductReport[]>([]);
     const [groups, setGroups] = useState<Group[]>([]);
     const [loading, setLoading] = useState(true);
+    const [loadError, setLoadError] = useState<string | null>(null);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
     // Filters
@@ -30,18 +31,24 @@ export default function ReportsPage() {
 
     const loadReports = useCallback(async () => {
         setLoading(true);
-        const data = await getConductReports({
-            group_id: filterGroupId || undefined,
-            type: filterType || undefined,
-            from: filterFrom || undefined,
-            to: filterTo || undefined,
-        });
-        setReports(data);
-        setLoading(false);
+        setLoadError(null);
+        try {
+            const data = await getConductReports({
+                group_id: filterGroupId || undefined,
+                type: filterType || undefined,
+                from: filterFrom || undefined,
+                to: filterTo || undefined,
+            });
+            setReports(data);
+        } catch (err: any) {
+            setLoadError(err?.message ?? 'Error desconocido al cargar reportes');
+        } finally {
+            setLoading(false);
+        }
     }, [filterGroupId, filterType, filterFrom, filterTo]);
 
     useEffect(() => {
-        getAllGroups().then(setGroups);
+        getAllGroups().then(setGroups).catch(() => {});
     }, []);
 
     useEffect(() => {
@@ -239,6 +246,12 @@ export default function ReportsPage() {
                             {[1, 2, 3].map((i) => (
                                 <div key={i} className="h-20 bg-white rounded-xl animate-pulse border border-[#E0E0E0]" />
                             ))}
+                        </div>
+                    ) : loadError ? (
+                        <div className="bg-rose-50 border border-rose-200 rounded-xl p-4">
+                            <p className="text-sm font-semibold text-rose-700 mb-1">Error al cargar reportes</p>
+                            <p className="text-xs text-rose-600 font-mono break-all">{loadError}</p>
+                            <button onClick={loadReports} className="mt-3 text-xs font-semibold text-rose-700 underline">Reintentar</button>
                         </div>
                     ) : reports.length === 0 ? (
                         <div className="bg-white p-8 rounded-xl border border-[#E0E0E0] text-center">
