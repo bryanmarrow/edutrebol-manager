@@ -36,13 +36,16 @@ All pages are client components (`"use client"`) that fetch data directly from S
 | `/groups` | All school groups (school-wide, any teacher can view) |
 | `/groups/[groupId]` | Student management for a group (add/edit/delete/bulk import) |
 | `/schedule` | Schedule configuration for teacher's classes |
-| `/reports` | Conduct reports (log incidents, filter, share by group) |
+| `/reports` | Conduct reports overview — cards grouped by grade, global metrics |
+| `/reports/group/[groupId]` | Per-group report detail — student cards with expandable incidents |
 | `/reports/share/[token]` | Public read-only conduct report page (no auth required) |
 | `/profile` | Teacher profile |
+| `/profile/security` | Password change |
 
 ### Data Layer (`src/lib/`)
 - **`supabase.ts`** — Single Supabase client using `NEXT_PUBLIC_*` env vars
 - **`queries.ts`** — All Supabase queries as typed async functions. RLS enforces data access rules.
+  - `groupReportsByGroup(reports[])` — client-side helper that transforms a flat `ConductReport[]` into `GroupedReports[]` (grouped by group_id, sorted by total desc, with per-student frequency ordering inside each group)
 - **`utils.ts`** — `cn()` (clsx + tailwind-merge) and `formatGrade()` (1→"1ero", 2→"2do", 3→"3ero")
 - **`conductReports.ts`** — Constants: `REPORT_TYPE_LABELS`, `REPORT_TYPE_COLORS`, `REPORT_TYPES` array
 
@@ -64,6 +67,7 @@ Applied migrations (in order):
 4. `src/migration_teacher_insert_policy.sql`
 5. `src/migration_groups.sql` — adds `groups` table; `group_id` on classes and students
 6. `src/migration_conduct_reports.sql` — adds `conduct_reports`, `report_shares`; RPC `get_shared_group_reports`
+7. `src/migration_students_class_nullable.sql` — makes `students.class_id` nullable
 
 **Key schema rules:**
 - `grade` is always `integer` (1, 2, 3) — use `formatGrade()` for display
@@ -77,6 +81,8 @@ Applied migrations (in order):
 ### Types (`src/types/index.ts`)
 `AttendanceStatus`, `Group`, `Student`, `ClassGroup`, `AttendanceSession`, `AttendanceRecord`, `StudentWithStatus`, `ConductReportType`, `ConductReport`.
 
+`GroupedReports` is defined in `src/lib/queries.ts` (not in types) since it's a derived/computed shape.
+
 ### Key Patterns
 
 **Groups vs Classes:** Groups (`1ero A`, `2do B`) are school-wide and own students. Classes are teacher-specific subjects (e.g., "Matemáticas I") linked to a group via `group_id`. When creating/editing a class, the teacher picks from all groups.
@@ -84,8 +90,9 @@ Applied migrations (in order):
 **Conduct reports flow:**
 1. Teacher opens `CreateReportDrawer` → selects group → student → incident type → notes → date
 2. `createConductReport()` auto-attaches current teacher's ID
-3. `getOrCreateShareToken(groupId)` returns a stable hex token for sharing
-4. Public share page calls `supabase.rpc('get_shared_group_reports', { p_token })` — no auth needed
+3. `/reports` shows `GroupedReports[]` sorted by grade then section alphabetically, with global metrics (total, top group, type breakdown bar)
+4. `/reports/group/[groupId]` shows per-student cards (sorted by report count desc) with expandable incident list and per-group metrics
+5. `getOrCreateShareToken(groupId)` returns a stable hex token — share button is available in the group detail page
 
 **Attendance state:** `useAttendance(storageKey, initialStudents)` in `src/hooks/useAttendance.ts` manages in-progress attendance with `localStorage` persistence under key `${classId}-${sessionDate}`. Status cycles: `present → absent → late → present`. Call `clearLocalSave()` after persisting to Supabase.
 
@@ -105,3 +112,4 @@ Applied migrations (in order):
 - `sonner` for toasts, `framer-motion` for animations, `lucide-react` for icons
 - Mobile-first: safe-area padding, fixed bottom nav, bottom-sheet drawers (`fixed bottom-0`)
 - `<Toaster>` is in the root layout — don't add it to individual pages
+- Desktop layouts use `max-w-5xl mx-auto` container and responsive grids (`sm:grid-cols-2 lg:grid-cols-3`)

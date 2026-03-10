@@ -327,6 +327,37 @@ export async function getAllStudentsByGroup(groupId: string) {
     return data || [];
 }
 
+export async function getStudentById(studentId: string): Promise<{
+    id: string;
+    first_name: string;
+    last_name: string;
+    student_id_official?: string;
+    group_id?: string;
+    group_grade?: number;
+    group_section?: string;
+} | null> {
+    const { data, error } = await supabase
+        .from('students')
+        .select('id, first_name, last_name, student_id_official, group_id, groups(grade, section)')
+        .eq('id', studentId)
+        .single();
+
+    if (error) {
+        console.error('Error fetching student:', error.message);
+        return null;
+    }
+
+    return {
+        id: data.id,
+        first_name: data.first_name,
+        last_name: data.last_name,
+        student_id_official: data.student_id_official,
+        group_id: data.group_id,
+        group_grade: (data as any).groups?.grade,
+        group_section: (data as any).groups?.section,
+    };
+}
+
 // ============================================================
 // ATTENDANCE SESSIONS
 // ============================================================
@@ -570,6 +601,7 @@ export async function createConductReport(data: {
 
 export async function getConductReports(filters?: {
     group_id?: string;
+    student_id?: string;
     type?: ConductReportType;
     from?: string;
     to?: string;
@@ -586,6 +618,7 @@ export async function getConductReports(filters?: {
         .order('created_at', { ascending: false });
 
     if (filters?.group_id) query = query.eq('group_id', filters.group_id);
+    if (filters?.student_id) query = query.eq('student_id', filters.student_id);
     if (filters?.type) query = query.eq('type', filters.type);
     if (filters?.from) query = query.gte('date', filters.from);
     if (filters?.to) query = query.lte('date', filters.to);
@@ -614,6 +647,47 @@ export async function getConductReports(filters?: {
     }));
 }
 
+export interface GroupedReports {
+    group_id: string;
+    group_grade: number;
+    group_section: string;
+    total: number;
+    countByType: Record<string, number>;
+    reports: ConductReport[];
+}
+
+export function groupReportsByGroup(reports: ConductReport[]): GroupedReports[] {
+    const map = new Map<string, GroupedReports>();
+
+    for (const r of reports) {
+        if (!r.group_id) continue;
+        if (!map.has(r.group_id)) {
+            map.set(r.group_id, {
+                group_id: r.group_id,
+                group_grade: r.group_grade ?? 0,
+                group_section: r.group_section ?? '',
+                total: 0,
+                countByType: {},
+                reports: [],
+            });
+        }
+        const entry = map.get(r.group_id)!;
+        entry.total += 1;
+        entry.countByType[r.type] = (entry.countByType[r.type] ?? 0) + 1;
+        entry.reports.push(r);
+    }
+
+    // Within each group: sort reports so students with more reports appear first
+    for (const entry of map.values()) {
+        const freq = new Map<string, number>();
+        for (const r of entry.reports) freq.set(r.student_id, (freq.get(r.student_id) ?? 0) + 1);
+        entry.reports.sort((a, b) => (freq.get(b.student_id) ?? 0) - (freq.get(a.student_id) ?? 0));
+    }
+
+    // Sort groups by total reports desc
+    return Array.from(map.values()).sort((a, b) => b.total - a.total);
+}
+
 export async function getOrCreateShareToken(groupId: string): Promise<string> {
     const { data: { user } } = await supabase.auth.getUser();
     if (!user) throw new Error('No autenticado');
@@ -640,6 +714,132 @@ export async function getOrCreateShareToken(groupId: string): Promise<string> {
     }
 
     return created.token;
+}
+
+// ============================================================
+// STUDENT ATTENDANCE STATS
+// ============================================================
+
+function getWeekStart(dateStr: string): string {
+    const d = new Date(dateStr + 'T00:00:00');
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    d.setDate(diff);
+    return d.toISOString().split('T')[0];
+}
+
+export async function getStudentAttendanceStats(studentId: string): Promise<{
+    totalSessions: number;
+    totalPresent: number;
+    totalAbsent: number;
+    totalLate: number;
+    percentPresent: number;
+}> {
+    const { data, error } = await supabase
+        .from('attendance_records')
+        .select('status')
+        .eq('student_id', studentId);
+
+    if (error || !data) return { totalSessions: 0, totalPresent: 0, totalAbsent: 0, totalLate: 0, percentPresent: 0 };
+
+    const totalSessions = data.length;
+    const totalPresent = data.filter((r: any) => r.status === 'present').length;
+    const totalAbsent = data.filter((r: any) => r.status === 'absent').length;
+    const totalLate = data.filter((r: any) => r.status === 'late').length;
+    const percentPresent = totalSessions > 0 ? Math.round((totalPresent / totalSessions) * 100) : 0;
+
+    return { totalSessions, totalPresent, totalAbsent, totalLate, percentPresent };
+}
+
+export async function getStudentAttendanceTrend(
+    studentId: string,
+    weeks = 8
+): Promise<{ weekLabel: string; present: number; absent: number; late: number }[]> {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - weeks * 7);
+    const cutoffStr = cutoff.toISOString().split('T')[0];
+
+    const { data, error } = await supabase
+        .from('attendance_records')
+        .select('status, attendance_sessions(date)')
+        .eq('student_id', studentId);
+
+    if (error || !data) return [];
+
+    const filtered = data.filter((r: any) => {
+        const date = r.attendance_sessions?.date;
+        return date && date >= cutoffStr;
+    });
+
+    const map = new Map<string, { present: number; absent: number; late: number }>();
+    for (const r of filtered) {
+        const date = (r as any).attendance_sessions?.date;
+        if (!date) continue;
+        const week = getWeekStart(date);
+        if (!map.has(week)) map.set(week, { present: 0, absent: 0, late: 0 });
+        const entry = map.get(week)!;
+        if (r.status === 'present') entry.present++;
+        else if (r.status === 'absent') entry.absent++;
+        else if (r.status === 'late') entry.late++;
+    }
+
+    const result: { weekLabel: string; present: number; absent: number; late: number }[] = [];
+    for (let i = weeks - 1; i >= 0; i--) {
+        const d = new Date();
+        d.setDate(d.getDate() - i * 7);
+        const week = getWeekStart(d.toISOString().split('T')[0]);
+        const label = new Date(week + 'T00:00:00').toLocaleDateString('es-MX', { month: 'short', day: 'numeric' });
+        const entry = map.get(week) ?? { present: 0, absent: 0, late: 0 };
+        result.push({ weekLabel: label, ...entry });
+    }
+
+    return result;
+}
+
+export async function getStudentAttendanceByClass(studentId: string): Promise<{
+    classId: string;
+    className: string;
+    totalSessions: number;
+    totalPresent: number;
+    totalAbsent: number;
+    totalLate: number;
+    percentPresent: number;
+}[]> {
+    const { data, error } = await supabase
+        .from('attendance_records')
+        .select('status, attendance_sessions(class_id, classes(id, name))')
+        .eq('student_id', studentId);
+
+    if (error || !data) return [];
+
+    const map = new Map<string, {
+        classId: string; className: string;
+        present: number; absent: number; late: number; total: number;
+    }>();
+
+    for (const r of data) {
+        const session = (r as any).attendance_sessions;
+        const cls = session?.classes;
+        if (!cls?.id) continue;
+        if (!map.has(cls.id)) {
+            map.set(cls.id, { classId: cls.id, className: cls.name ?? 'Sin nombre', present: 0, absent: 0, late: 0, total: 0 });
+        }
+        const entry = map.get(cls.id)!;
+        entry.total++;
+        if (r.status === 'present') entry.present++;
+        else if (r.status === 'absent') entry.absent++;
+        else if (r.status === 'late') entry.late++;
+    }
+
+    return Array.from(map.values()).map((e) => ({
+        classId: e.classId,
+        className: e.className,
+        totalSessions: e.total,
+        totalPresent: e.present,
+        totalAbsent: e.absent,
+        totalLate: e.late,
+        percentPresent: e.total > 0 ? Math.round((e.present / e.total) * 100) : 0,
+    })).sort((a, b) => a.className.localeCompare(b.className));
 }
 
 export async function getSharedGroupReports(token: string): Promise<ConductReport[]> {

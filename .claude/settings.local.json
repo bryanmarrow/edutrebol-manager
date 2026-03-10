@@ -18,7 +18,11 @@
       "Bash(cd \"/Users/bryanmartinez/Documents/Desarrollo IA/panel_secu/asistencia-secu\" && git add src/migration_grade_to_integer.sql src/types/index.ts src/lib/utils.ts src/lib/queries.ts src/components/ClassFormDrawer.tsx src/app/classes/page.tsx src/app/dashboard/page.tsx src/app/schedule/page.tsx \"src/app/classes/[classId]/session/[date]/page.tsx\" \"src/app/classes/[classId]/students/page.tsx\" src/supabase_schema.sql src/seed.sql && git commit -m \"$\\(cat <<'EOF'\nfeat: grade as integer with formatted display \\(1ero, 2do, 3ero\\)\n\n- grade column: text → integer in DB \\(migration_grade_to_integer.sql\\)\n- Add formatGrade\\(\\) helper in utils.ts\n- ClassFormDrawer: grade state is number, input is 3-button selector\n- All display locations use formatGrade\\(\\) for consistent rendering\n\nCo-Authored-By: Claude Sonnet 4.6 <noreply@anthropic.com>\nEOF\n\\)\")",
       "mcp__ide__getDiagnostics",
       "Bash(cd \"/Users/bryanmartinez/Documents/Desarrollo IA/panel_secu/asistencia-secu\" && timeout 15 npm run dev 2>&1 | head -80 || true)",
-      "Bash(ls -lO \"/Users/bryanmartinez/Documents/Desarrollo IA/panel_secu/asistencia-secu/.next/dev/static/chunks/src_app_globals_css_bad6b30c._.single.css.map\" && xattr -l \"/Users/bryanmartinez/Documents/Desarrollo IA/panel_secu/asistencia-secu/.next/dev/static/chunks/src_app_globals_css_bad6b30c._.single.css.map\" 2>&1)"
+      "Bash(ls -lO \"/Users/bryanmartinez/Documents/Desarrollo IA/panel_secu/asistencia-secu/.next/dev/static/chunks/src_app_globals_css_bad6b30c._.single.css.map\" && xattr -l \"/Users/bryanmartinez/Documents/Desarrollo IA/panel_secu/asistencia-secu/.next/dev/static/chunks/src_app_globals_css_bad6b30c._.single.css.map\" 2>&1)",
+      "Bash(claude mcp add --transport http vercel https://mcp.vercel.com)",
+      "Bash(vercel whoami)",
+      "Bash(git checkout HEAD -- src/app/page.tsx src/app/profile/page.tsx src/app/reports/page.tsx src/components/layout/BottomNav.tsx src/components/layout/TopBar.tsx src/lib/queries.ts src/types/index.ts)",
+      "Bash(npx skills add obra/superpowers@writing-plans -g -y 2>/dev/null | tail -5)"
     ]
   }
 }

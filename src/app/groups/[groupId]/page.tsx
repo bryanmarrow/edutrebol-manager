@@ -16,6 +16,7 @@ import {
     bulkDeleteStudents,
 } from "@/lib/queries";
 import { formatGrade } from "@/lib/utils";
+import Link from "next/link";
 import {
     UserPlus,
     Pencil,
@@ -316,8 +317,8 @@ export default function GroupDetailPage() {
                                     {idx + 1}
                                 </span>
 
-                                <div className="flex-1 min-w-0">
-                                    <p className="text-sm font-medium text-[#181818] truncate">
+                                <Link href={`/students/${student.id}`} className="flex-1 min-w-0 group">
+                                    <p className="text-sm font-medium text-[#181818] truncate group-hover:text-[#555] transition-colors">
                                         {student.last_name}{" "}
                                         <span className="text-[#8E8E8E] font-normal">{student.first_name}</span>
                                     </p>
@@ -327,7 +328,7 @@ export default function GroupDetailPage() {
                                     {!student.active && (
                                         <span className="text-[10px] font-semibold text-red-500 uppercase">Baja</span>
                                     )}
-                                </div>
+                                </Link>
 
                                 {deletingId === student.id ? (
                                     <div className="flex items-center gap-1">
