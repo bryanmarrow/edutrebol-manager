@@ -113,7 +113,7 @@ export function CreateReportDrawer({
 
         setSaving(true);
         try {
-            await Promise.all(
+            const results = await Promise.allSettled(
                 [...selectedStudentIds].map((studentId) =>
                     createConductReport({
                         student_id: studentId,
@@ -124,14 +124,21 @@ export function CreateReportDrawer({
                     })
                 )
             );
-            const count = selectedStudentIds.size;
-            toast.success(`${count} reporte${count !== 1 ? "s" : ""} registrado${count !== 1 ? "s" : ""}`);
-            onSaved();
-            onClose();
-        } catch {
-            toast.error("Error al registrar reportes");
+            const succeeded = results.filter((r) => r.status === "fulfilled").length;
+            const failed = results.filter((r) => r.status === "rejected").length;
+            if (succeeded > 0) {
+                toast.success(`${succeeded} reporte${succeeded !== 1 ? "s" : ""} registrado${succeeded !== 1 ? "s" : ""}`);
+            }
+            if (failed > 0) {
+                toast.error(`${failed} reporte${failed !== 1 ? "s" : ""} no ${failed !== 1 ? "se pudieron guardar" : "se pudo guardar"}`);
+            }
+            if (failed === 0) {
+                onSaved();
+                onClose();
+            }
+        } finally {
+            setSaving(false);
         }
-        setSaving(false);
     }
 
     if (!open) return null;
@@ -211,7 +218,7 @@ export function CreateReportDrawer({
                                     className="flex items-center gap-1 text-xs text-[#8E8E8E] hover:text-[#181818] transition-colors"
                                 >
                                     {allSelected ? <CheckSquare size={13} /> : <Square size={13} />}
-                                    {allSelected ? "Ninguno" : "Todos"}
+                                    {allSelected ? "Ninguno" : studentSearch ? "Todos (filtrados)" : "Todos"}
                                 </button>
                             )}
                         </div>

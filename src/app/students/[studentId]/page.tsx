@@ -3,7 +3,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ClipboardList } from "lucide-react";
-import { toast } from "sonner";
 import { BottomNav } from "@/components/layout/BottomNav";
 import { CreateReportDrawer } from "@/components/CreateReportDrawer";
 import { AttendanceStats } from "@/components/students/AttendanceStats";
@@ -128,7 +127,6 @@ export default function StudentProfilePage() {
                 onClose={() => setDrawerOpen(false)}
                 onSaved={() => {
                     setDrawerOpen(false);
-                    toast.success("Reporte guardado");
                     loadData();
                 }}
                 preselectedGroupId={student?.group_id}
